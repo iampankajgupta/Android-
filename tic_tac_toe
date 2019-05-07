@@ -1,0 +1,91 @@
+package com.example.tictactoe;
+
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.GridLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+
+import org.w3c.dom.Text;
+
+public class MainActivity extends AppCompatActivity {
+
+    int activePlayer = 0;
+    int [] gameState = {2,2,2,2,2,2,2,2,2};
+    int [][] winningPositions = {{0,1,2},{3,4,5},{6,7,8},{0,3,6},{1,4,7},{2,5,8},{0,4,8},{2,4,6}};
+    boolean gameIsActive = true;
+    public void dropin(View view) {
+        ImageView player = (ImageView) view;
+        int tappedCounter = Integer.parseInt(player.getTag().toString());
+        if (gameState[tappedCounter] == 2 && gameIsActive) {
+            gameState[tappedCounter] = activePlayer;
+            player.setTranslationY(-50f);
+            if (activePlayer == 0) {
+                player.setImageResource(R.drawable.zero);
+                activePlayer = 1;
+            } else {
+                player.setImageResource(R.drawable.x);
+                activePlayer = 0;
+            }
+            for(int [] winningPosition:winningPositions){
+                if(gameState[winningPosition[0]]== gameState[winningPosition[1]] && gameState[winningPosition[1]]
+                        == gameState[winningPosition[2]]
+                        && gameState[winningPosition[0]] != 2){
+                    gameIsActive = false;
+                    String winner = "Player 2";
+                    if(gameState[winningPosition[0]]==0){
+                        winner = "Player 1 ";
+                    }
+                    TextView winningMessage = findViewById(R.id.winningMessage);
+                    winningMessage.setText(winner+"has won!!");
+                    Button playAgain = (Button) findViewById(R.id.playAgain);
+                    winningMessage.setVisibility(View.VISIBLE);
+                    playAgain.setVisibility(View.VISIBLE);
+
+                }
+                else{
+                    boolean gameOver = true;
+                    for(int check:gameState){
+                        if(check==2) gameOver = false;
+                    }
+                    if(gameOver){
+                        TextView winningMessage = findViewById(R.id.winningMessage);
+                        Button playAgain = (Button) findViewById(R.id.playAgain);
+                        winningMessage.setText("It's a draw");
+                        winningMessage.setVisibility(View.VISIBLE);
+                        playAgain.setVisibility(View.VISIBLE);
+
+                    }
+                }
+            }
+        }
+    }
+        public void PlayAgain(View view){
+        gameIsActive = true;
+            TextView winningMessage = findViewById(R.id.winningMessage);
+            Button playAgain = findViewById(R.id.playAgain);
+
+            winningMessage.setVisibility(View.INVISIBLE);
+            playAgain.setVisibility(View.INVISIBLE);
+
+            activePlayer = 0;
+
+            for(int i = 0;i<9;i++){
+                    gameState[i] = 2;
+            }
+            android.support.v7.widget.GridLayout gridLayout = (android.support.v7.widget.GridLayout)findViewById(R.id.gridlayout);
+
+            for(int i = 0;i < gridLayout.getChildCount(); i++){
+                ((ImageView)gridLayout.getChildAt(i)).setImageResource(0);
+            }
+        }
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+    }
+}
